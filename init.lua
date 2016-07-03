@@ -163,6 +163,17 @@ minetest.register_node("commands:save", {
 	end,
 })
 
+minetest.register_node("commands:button", {
+	description = "Button",
+	tiles = {"commands_button.png"},
+	groups = {cracky = 3, commands = 1},
+	sounds = default.node_sound_stone_defaults(),
+
+	on_punch = function(pos, node, player, pointed_thing)
+		commands.activate(pos)
+	end
+})
+
 minetest.register_node("commands:white_tile", {
 	description = "White Tile",
 	tiles = {"commands_white_tile.png"},
