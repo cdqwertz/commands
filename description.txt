@@ -1,0 +1,12 @@
+This mod adds some command blocks to your minetest world!
+
+Blocks :
+	- Code Block
+	- If Block
+	- Timer
+	- Button
+	- Save Block
+
+
+
+cd2 (cdqwertz) - cdqwertz.github.io
