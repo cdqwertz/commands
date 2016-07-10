@@ -2,6 +2,11 @@ commands = {}
 commands.commands = {}
 commands.vars = {}
 
+minetest.register_privilege("code", {
+	description = "Player can change command blocks",
+	give_to_singleplayer= false,
+})
+
 function commands.register_command(name, def)
 	commands.commands[name] = def
 end
@@ -59,6 +64,10 @@ minetest.register_node("commands:code", {
 		meta:set_string("infotext", "Empty Code Block")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
+		if not(minetest.get_player_privs(sender:get_player_name()).code) then
+			return 
+		end
+		
 		local meta = minetest.get_meta(pos)
 		if not fields.text then return end
 		meta:set_string("code", fields.text)
@@ -92,6 +101,10 @@ minetest.register_node("commands:if", {
 		meta:set_string("infotext", "Empty If Block")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
+		if not(minetest.get_player_privs(sender:get_player_name()).code) then
+			return 
+		end
+
 		local meta = minetest.get_meta(pos)
 		if not fields.text then return end
 		meta:set_string("code", fields.text)
@@ -142,6 +155,10 @@ minetest.register_node("commands:save", {
 		meta:set_string("infotext", "Empty Save Block")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
+		if not(minetest.get_player_privs(sender:get_player_name()).code) then
+			return 
+		end
+
 		local meta = minetest.get_meta(pos)
 		if not fields.text then return end
 		meta:set_string("code", fields.text)
@@ -172,6 +189,21 @@ minetest.register_node("commands:button", {
 	on_punch = function(pos, node, player, pointed_thing)
 		commands.activate(pos)
 	end
+})
+
+minetest.register_node("commands:mese_detector", {
+	description = "Mese Detector",
+	tiles = {"commands_mese_detector.png"},
+	groups = {cracky = 3, commands = 1},
+	sounds = default.node_sound_stone_defaults(),
+
+	mesecons = {effector = {
+		action_on = function (pos)
+			commands.activate(pos)
+		end,
+		action_off = function (pos)
+		end
+	}}
 })
 
 minetest.register_node("commands:white_tile", {
