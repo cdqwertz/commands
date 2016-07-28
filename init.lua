@@ -51,6 +51,31 @@ function commands.activate(pos)
 	end
 end
 
+function commands.get_pos(a,b,c)
+	if not(a) or not(b) or not(c) then
+		return
+	end
+
+	if a.is_player and a:is_player() then
+		if a:getpos() then
+			local v = a:getpos()
+			if b == "below" then
+				v.y = v.y -1
+			elseif b == "above" then
+				v.y = v.y + 2
+			end
+
+			return v
+		end
+	else
+		if not(tonumber(a)) or not(tonumber(b)) or not(tonumber(c)) then
+			return
+		end
+
+		return vector.new(tonumber(a),tonumber(b),tonumber(c))
+	end
+end
+
 minetest.register_node("commands:code", {
 	description = "Code",
 	tiles = {"commands_code.png"},
@@ -250,15 +275,7 @@ commands.register_command("tp", {
 			if not params[4] then return end
 			if not params[5] then return end
 			
-			local x = tonumber(params[3])
-			local y = tonumber(params[4])
-			local z = tonumber(params[5])
-
-			if not x then return end
-			if not y then return end
-			if not z then return end
-
-			local p = vector.new(x, y, z)
+			local p = commands.get_pos(params[3], params[4], params[5])
 			player:setpos(p)
 			return true
 		elseif param == "player" then
@@ -281,36 +298,47 @@ commands.register_command("node", {
 		if not params[4] then return end
 		local param = params[1]
 		if param == "get" then
-			local x = tonumber(params[2])
-			local y = tonumber(params[3])
-			local z = tonumber(params[4])
-
-			if not x then return end
-			if not y then return end
-			if not z then return end
-
-			local p = vector.new(x, y, z)
+			local p = commands.get_pos(params[2], params[3], params[4])
 			return minetest.get_node(p).name
 		elseif param == "set" then
 			if not params[5] then return end
 			if params[5]  == "" then return end
 			if not minetest.registered_nodes[params[5]] then return end
 
-
-			local x = tonumber(params[2])
-			local y = tonumber(params[3])
-			local z = tonumber(params[4])
-
-			if not x then return end
-			if not y then return end
-			if not z then return end
-
-			local p = vector.new(x, y, z)
+			local p = commands.get_pos(params[2], params[3], params[4])
 			minetest.set_node(p, {name=params[5]})
 
 			return true
+		elseif param == "detect" then
+			if not params[5] then return end
+			if params[5]  == "" then return end
+			if not minetest.registered_nodes[params[5]] then return end
+
+			local p = commands.get_pos(params[2], params[3], params[4])
+			if minetest.get_node(p).name == params[5] then
+				return true
+			else
+				return false
+			end
 		else
 			return
 		end
 	end
 })
+
+
+commands.register_command("player", {
+	run = function(params) 
+		if not params[1] then return end
+		if not params[2] then return end
+		local action = params[1]
+		
+		if action == "get" then
+			local p  = minetest.get_player_by_name(params[2])
+			return p
+		end
+		
+		return false
+	end
+})
+
