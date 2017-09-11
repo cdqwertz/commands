@@ -16,4 +16,4 @@ see LICENSE.txt
 Report bugs on the forum topic or open a issue on GitHub.
 
 ##created by
-cd2 (cdqwertz) - cdqwertz.github.io
+cdqwertz - cdqwertz.github.io
